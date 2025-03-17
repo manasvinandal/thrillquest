@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Book Your Adventure</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="booking.html">Book Now</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Sign Up</a>
+    </nav>
+</header>
+
+<div class="form-container">
+    <h2>Book an Adventure</h2>
+    <form id="bookingForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <select id="activity">
+            <option value="">Select Activity</option>
+            <option value="Sky Diving">Sky Diving</option>
+            <option value="Scuba Diving">Scuba Diving</option>
+            <option value="Trekking">Trekking</option>
+        </select>
+        <input type="date" id="date" required>
+        <button type="submit">Book Now</button>
+    </form>
+</div>
+
+<footer>
+    <p>&copy; 2025 Adventure Booking. All rights reserved.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
