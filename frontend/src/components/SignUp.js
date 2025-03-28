@@ -1,69 +1,64 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { userService } from '../services/api';
 import '../styles/SignUp.css';
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    phone: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup submission
-    console.log('Signup submitted:', formData);
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await userService.register(formData);
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Redirect to home page
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="signup-page">
-      <div className="signup-container">
-        <div className="signup-header">
-          <h1>Create Your Account</h1>
-          <p>Join ThrillQuest and start your adventure</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="signup-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your first name"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your last name"
-              />
-            </div>
-          </div>
-
+    <div className="signup-container">
+      <div className="signup-card">
+        <h2>Create Account</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -71,10 +66,8 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
             />
           </div>
-
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -84,57 +77,26 @@ const SignUp = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Create a password"
             />
           </div>
-
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="phone">Phone Number</label>
             <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
               required
-              placeholder="Confirm your password"
             />
           </div>
-
-          <div className="terms">
-            <label className="checkbox-label">
-              <input type="checkbox" required />
-              I agree to the{' '}
-              <Link to="/terms">Terms of Service</Link> and{' '}
-              <Link to="/privacy">Privacy Policy</Link>
-            </label>
-          </div>
-
-          <button type="submit" className="signup-button">
-            Create Account
+          <button type="submit" disabled={loading}>
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
-
-          <div className="social-signup">
-            <p>Or sign up with</p>
-            <div className="social-buttons">
-              <button type="button" className="social-button google">
-                <i className="fab fa-google"></i>
-                Google
-              </button>
-              <button type="button" className="social-button facebook">
-                <i className="fab fa-facebook-f"></i>
-                Facebook
-              </button>
-            </div>
-          </div>
-
-          <div className="login-link">
-            <p>
-              Already have an account?{' '}
-              <Link to="/login">Sign in</Link>
-            </p>
-          </div>
         </form>
+        <p className="login-link">
+          Already have an account? <a href="/login">Login here</a>
+        </p>
       </div>
     </div>
   );

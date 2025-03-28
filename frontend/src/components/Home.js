@@ -8,7 +8,7 @@ const Home = () => {
       id: 1,
       title: 'Mountain Trekking',
       image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b',
-      price: '$299',
+      price: '₹24,999',
       duration: '3 days',
       location: 'Himalayas'
     },
@@ -16,7 +16,7 @@ const Home = () => {
       id: 2,
       title: 'Scuba Diving',
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5',
-      price: '$199',
+      price: '₹16,999',
       duration: '1 day',
       location: 'Great Barrier Reef'
     },
@@ -24,7 +24,7 @@ const Home = () => {
       id: 3,
       title: 'Desert Safari',
       image: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35',
-      price: '$149',
+      price: '₹12,999',
       duration: '1 day',
       location: 'Dubai'
     }
@@ -36,9 +36,14 @@ const Home = () => {
         <div className="hero-content">
           <h1>Discover Your Next Adventure</h1>
           <p>Experience the thrill of a lifetime with our curated adventure packages</p>
-          <Link to="/booking" className="cta-button">
-            Start Your Journey
-          </Link>
+          <div className="hero-buttons">
+            <Link to="/adventures" className="cta-button">
+              Explore Adventures
+            </Link>
+            <Link to="/booking" className="cta-button secondary">
+              Book Now
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -57,8 +62,8 @@ const Home = () => {
                   <span className="duration">{adventure.duration}</span>
                   <span className="price">{adventure.price}</span>
                 </div>
-                <Link to="/booking" className="book-button">
-                  Book Now
+                <Link to={`/adventure/${adventure.id}`} className="book-button">
+                  View Details
                 </Link>
               </div>
             </div>

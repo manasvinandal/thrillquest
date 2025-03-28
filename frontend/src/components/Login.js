@@ -1,38 +1,51 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { userService } from '../services/api';
 import '../styles/Login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login submission
-    console.log('Login submitted:', formData);
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await userService.login(formData);
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Redirect to home page
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-header">
-          <h1>Welcome Back</h1>
-          <p>Sign in to continue your adventure</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="login-form">
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Welcome Back</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -40,10 +53,8 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
             />
           </div>
-
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -53,44 +64,15 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Enter your password"
             />
           </div>
-
-          <div className="form-options">
-            <label className="remember-me">
-              <input type="checkbox" /> Remember me
-            </label>
-            <Link to="/forgot-password" className="forgot-password">
-              Forgot Password?
-            </Link>
-          </div>
-
-          <button type="submit" className="login-button">
-            Sign In
+          <button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
-
-          <div className="social-login">
-            <p>Or continue with</p>
-            <div className="social-buttons">
-              <button type="button" className="social-button google">
-                <i className="fab fa-google"></i>
-                Google
-              </button>
-              <button type="button" className="social-button facebook">
-                <i className="fab fa-facebook-f"></i>
-                Facebook
-              </button>
-            </div>
-          </div>
-
-          <div className="signup-link">
-            <p>
-              Don't have an account?{' '}
-              <Link to="/signup">Sign up</Link>
-            </p>
-          </div>
         </form>
+        <p className="signup-link">
+          Don't have an account? <a href="/signup">Sign up here</a>
+        </p>
       </div>
     </div>
   );
